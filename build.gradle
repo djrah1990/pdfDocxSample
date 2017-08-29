@@ -1,0 +1,37 @@
+buildscript {
+	ext {
+		springBootVersion = '1.5.6.RELEASE'
+	}
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+	}
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = 1.8
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	compile('org.springframework.boot:spring-boot-starter')
+	compile("org.springframework.boot:spring-boot-starter-web")
+	compile("org.springframework.boot:spring-boot-starter-thymeleaf")
+	compile("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:1.2")
+	compile files("libs/docx4j-3.3.3.jar")
+	compile('commons-io:commons-io:2.5')
+	compile('org.apache.commons:commons-lang3:3.4')
+	compile('xalan:xalan:2.7.1')
+	compile('com.google.guava:guava:r05')
+	testCompile('org.springframework.boot:spring-boot-starter-test')
+	compile('org.apache.httpcomponents:httpclient:4.5.2')
+
+}

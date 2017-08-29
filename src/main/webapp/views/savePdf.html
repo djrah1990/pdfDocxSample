@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.springframework.org/schema/mvc">
+<head>
+  <meta charset="UTF-8"/>
+  <title>PDF 저장</title>
+  <style>
+    @import url(http://fonts.googleapis.com/earlyaccess/notosanskr.css);
+    @import url(//cdn.jsdelivr.net/nanumsquare/1.0/nanumsquare.css);
+    /*@import url(http://fonts.googleapis.com/earlyaccess/kopubbatang.css);*/
+    /* IE 폰트 적용 */
+    @font-face {
+      font-family: 'KoPub Batang';
+      src: url('http://fonts.gstatic.com/ea/kopubbatang/v3/KoPubBatang-Regular.woff2') format('woff2'),
+      url('http://fonts.gstatic.com/ea/kopubbatang/v3/KoPubBatang-Regular.woff') format('woff'),
+      url('http://fonts.gstatic.com/ea/kopubbatang/v3/KoPubBatang-Regular.ttf') format('truetype');
+    }
+
+    body {
+      margin: 0;
+    }
+
+    body .catalogue-container.page {
+      line-height: 1.42857 !important;
+    }
+
+    /*.pswp * {*/
+    /*box-sizing: initial !important;*/
+    /*}*/
+
+    .catalogue-container.page {
+      height: 20.9cm;
+      width: 29.7cm;
+      background: transparent;
+    }
+
+    .catalogue-container.preview {
+      margin: 1.5cm auto;
+    }
+
+    .catalogue-container .subpage {
+      width: 29.7cm;
+      height: 20.9cm;
+    }
+
+    @page {
+      size: A4 landscape;
+      margin: 0;
+    }
+
+    @media print {
+      .catalogue-container.page {
+        margin: 0;
+        border: initial;
+        border-radius: initial;
+        width: initial;
+        min-height: initial;
+        box-shadow: initial;
+        background: initial;
+        page-break-after: always;
+      }
+    }
+
+    .catalogue-container .item-main-wrapper, .catalogue-container .item-detail-wrapper {
+      width: 100%;
+      height: 100%;
+      background: #fff;
+      position: relative;
+    }
+
+    .catalogue-container .intro-main-wrapper {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+
+    .catalogue-container .intro-main-wrapper .intro-main-image {
+      height: 655.5px;
+    }
+
+    .catalogue-container .intro-main-image img {
+      width: 100%;
+      height: 100%;
+    }
+
+    .catalogue-container .intro-main-date {
+      width: 100%;
+      position: relative;
+      display: inline-block;
+      top: 520px;
+    }
+
+    .catalogue-container .intro-main-date #introDate {
+      /*font-family: garamond-premier-pro-display, serif;*/
+      font-family: 'KoPub Batang', 'NanumSquare', sans-serif;
+      float: right;
+      font-size: 72px;
+      color: #f0f0f0;
+      font-style: italic;
+      margin: 0;
+      padding-right: 40px;
+    }
+
+    .catalogue-container .intro-main-description img {
+      float: left;
+      margin: 41.5px 0 41.5px 40px;
+    }
+
+    .catalogue-container .intro-main-description p {
+      float: right;
+      font-family: 'NanumSquare', sans-serif;
+      font-size: 42px;
+      color: #2db400;
+      margin: 28px 40px 28px 30px;
+      font-weight: 700;
+    }
+
+    .catalogue-container .intro-main-wrapper .intro-main-description {
+      height: 125px;
+      border-top: 10px solid #2db400;
+      position: relative;
+      top: 548px;
+      background-color: #ffffff;
+    }
+
+    .catalogue-container .item-main-wrapper .item-main-image {
+      height: 100%;
+      width: 65%;
+      float: left;
+    }
+
+    .catalogue-container .intro-main-image {
+      position: absolute;
+      width: 100%;
+    }
+
+    .catalogue-container .intro-main-image .intro-main-img {
+      position: relative;
+      top: 0px;
+      left: 0px;
+      width: 100%;
+      height: 100%;
+    }
+
+    .catalogue-container .item-main-image img {
+      width: 100%;
+      height: 100%;
+    }
+
+    .catalogue-container .item-main-wrapper .item-main-description {
+      float: right;
+      width: 35%;
+      height: 100%;
+      position: relative;
+      background-color: #ffffff;
+    }
+
+    .catalogue-container .item-main-logo {
+      float: right;
+      margin: 50px;
+      width: 25%;
+    }
+
+    .catalogue-container .item-main-logo img,
+    .catalogue-container .brand-main-logo img {
+      width: 100%;
+      height: 100%;
+    }
+
+    .catalogue-container .item-main-description .item-main-text {
+      position: absolute;
+      margin: 0 60px 83px 60px;
+      bottom: 0px;
+      width: 69%;
+    }
+
+    .catalogue-container .item-main-text .item-main-text-title {
+      padding-bottom: 20px;
+    }
+
+    .catalogue-container .item-main-text-title .text-number {
+      font-family: garamond-premier-pro-display, serif;
+      font-style: italic;
+      font-size: 72px;
+      margin: 0 0 -10px -10px;
+      display: inline-block;
+      font-weight: 700;
+    }
+
+    .catalogue-container .item-main-description .text-en {
+      font-family: 'NanumSquare', sans-serif;
+      font-size: 45px;
+      margin: 0 0 -5px 0;
+      font-weight: 700;
+    }
+
+    .catalogue-container .item-main-description .text-ko {
+      font-family: 'NanumSquare', sans-serif;
+      font-size: 21px;
+      color: #6e6e6e;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .catalogue-container .item-main-text ul {
+      padding-left: 0px;
+      margin: 20px 0;
+      font-family: "Noto Sans KR", sans-serif;
+      font-size: 15px;
+      color: #6e6e6e;
+    }
+
+    .catalogue-container .item-main-text ul li {
+      padding: 5px 0;
+      list-style: none;
+    }
+
+    .catalogue-container .item-main-text ul li:before {
+      content: '\2022';
+      margin-right: 15px;
+      font-size: 18px;
+      line-height: 10px;
+    }
+
+    .catalogue-container .wrapper-footer {
+      position: absolute;
+      bottom: 0;
+      width: 89.2%;
+      margin: 0 60px;
+      border-top: 1px solid #dddddd;
+    }
+
+    .catalogue-container .wrapper-footer p {
+      margin: 15px 0 30px;
+      float: right;
+      font-size: 10px;
+    }
+
+    .catalogue-container .wrapper-footer p span {
+      font-size: 13px;
+    }
+
+    .catalogue-container .item-detail-wrapper .item-detail-header {
+      height: 17%;
+      width: 100%;
+      position: relative;
+      background-color: #fbfbfb;
+    }
+
+    .catalogue-container .item-detail-wrapper .item-detail-category {
+      -webkit-transform: rotate(90deg);
+      -moz-transform: rotate(90deg);
+      -ms-transform: rotate(90deg);
+      -o-transform: rotate(90deg);
+      transform: rotate(90deg);
+      position: absolute;
+      top: 96px;
+      left: -97px;
+      width: 230px;
+      z-index: 2;
+    }
+
+    .catalogue-container .item-detail-category p {
+      font-family: "Noto Sans KR", sans-serif;
+      font-size: 12px;
+      margin: 10px 0 10px 30px;
+      color: #ffffff;
+    }
+
+    .catalogue-container .item-detail-header-title {
+      position: absolute;
+      bottom: 0;
+      margin-left: 80px;
+      margin-bottom: 25px;
+    }
+
+    .catalogue-container .item-detail-header-title p {
+      font-family: "NanumSquare", sans-serif;
+      font-size: 52px;
+      margin: 0;
+      font-style: italic;
+      font-weight: bold;
+      line-height: 1.0;
+    }
+
+    .catalogue-container .item-detail-header-title p span {
+      font-size: 21px;
+      font-style: normal;
+      margin-left: 10px;
+    }
+
+    .catalogue-container .item-detail-header-title p span span {
+      font-weight: 700;
+    }
+
+    .catalogue-container .item-detail-header-logo {
+      position: absolute;
+      right: 0;
+    }
+
+    .catalogue-container .item-detail-wrapper .item-detail-description {
+      height: 616px;
+      /*width: 100%;*/
+      background-color: #ffffff;
+      padding: 20px 80px;
+    }
+
+    .catalogue-container .item-detail-wrapper .item-detail-description .item-detail-4,
+    .item-detail-4 .item-detail-4-item2, .item-detail-2, .item-detail-2-item, .item-detail-10, .item-detail-10-item-5 {
+      display: inline-block;
+    }
+
+    .catalogue-container .item-detail-description-title .item-detail-des-title {
+      font-family: "Noto Sans KR", sans-serif;
+      font-size: 40px;
+      font-weight: 700;
+      margin: 0;
+      line-height: 1.0;
+    }
+
+    .catalogue-container .item-detail-description-title .item-detail-des-title span {
+      font-weight: 500;
+      font-size: 15px;
+    }
+
+    .catalogue-container .item-detail-4-box {
+      width: 473.5px;
+      height: 242px;
+      float: left;
+      background-color: #ffffff;
+      border-left: 1px solid #dddddd;
+      border-right: 1px solid #dddddd;
+      border-bottom: 1px solid #dddddd;
+      box-sizing: border-box;
+    }
+
+    .catalogue-container .item-detail-4-box table tbody tr th,
+    .catalogue-container .item-detail-2-box table tbody tr th {
+      width: 65px;
+      text-align: justify;
+      -ms-text-align-last: justify;
+      text-align-last: justify;
+    }
+
+    .catalogue-container .item-detail-5-box table tbody tr th.priceText {
+      letter-spacing: 1.1px;
+    }
+
+    .catalogue-container .item-detail-5-box table tbody tr th {
+      width: 61px;
+      text-align: justify;
+      -ms-text-align-last: justify;
+      text-align-last: justify;
+    }
+
+    .catalogue-container .item-detail-4-box .box-image,
+    .catalogue-container .item-detail-2-box .box-image {
+      width: 40%;
+      float: left;
+      line-height: 238px;
+    }
+
+    .catalogue-container .item-detail-4-box .box-desc,
+    .catalogue-container .item-detail-2-box .box-desc {
+      width: 241px;
+      float: left;
+      margin: 10px 20px;
+    }
+
+    .catalogue-container .box-desc .box-desc-title {
+      font-family: "Noto Sans KR", sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      margin: 0;
+      border-bottom: 1px dotted #dddddd;
+      letter-spacing: -1px;
+      height: 44px;
+      padding-bottom: 5px;
+      white-space: normal;
+      word-wrap: break-word;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      box-sizing: initial;
+    }
+
+    .catalogue-container .item-detail-4-box {
+      margin-bottom: 15px;
+    }
+
+    .catalogue-container .item-detail-4-box:nth-child(odd),
+    .catalogue-container .item-detail-2-box:first-child {
+      margin-right: 7.5px;
+    }
+
+    .catalogue-container .item-detail-4-box:nth-child(even),
+    .catalogue-container .item-detail-2-box:last-child {
+      margin-left: 7.5px;
+    }
+
+    .catalogue-container .box-image img {
+      max-width: 100%;
+      max-height: 100%;
+      width: auto;
+      height: auto;
+      vertical-align: middle;
+    }
+
+    .catalogue-container .item-detail-description-title {
+      margin-bottom: 20px;
+    }
+
+    .catalogue-container .box-desc table {
+      padding-top: 5px;
+      display: block;
+      font-family: "Noto Sans KR", sans-serif;
+    }
+
+    .catalogue-container .box-desc table tbody tr {
+      font-size: 14px;
+    }
+
+    .catalogue-container .box-desc table tbody tr th {
+      font-weight: 600;
+    }
+
+    .catalogue-container .box-desc table tbody tr td {
+      padding-left: 10px;
+    }
+
+    .catalogue-container .item-label {
+      position: relative;
+    }
+
+    .catalogue-container .item-label .item-label-hot {
+      background-color: violet;
+      padding: 5px;
+      position: absolute;
+      top: 10px;
+      left: 10px;
+    }
+
+    .catalogue-container .item-label-hot p {
+      font-size: 14px;
+      margin: 0;
+      color: #ffffff;
+    }
+
+    .catalogue-container .item-detail-2-item .item-detail-2-box {
+      width: 473.5px;
+      float: left;
+      border-left: 1px solid #dddddd;
+      border-right: 1px solid #dddddd;
+      border-bottom: 1px solid #dddddd;
+      box-sizing: border-box;
+    }
+
+    .catalogue-container .item-detail-2-box .box-background-image {
+      height: 257px;
+      background-size: cover !important;
+      background-position: center !important;
+    }
+
+    .catalogue-container .box-desc-wrapper {
+      background-color: #ffffff;
+    }
+
+    .catalogue-container .item-detail-5-box {
+      width: 184.5px;
+      height: 284px;
+      float: left;
+      border-left: 1px solid #dddddd;
+      border-right: 1px solid #dddddd;
+      border-bottom: 1px solid #dddddd;
+      box-sizing: border-box;
+    }
+
+    .item-detail-10-description {
+      padding: 8px 80px 20px !important;
+    }
+
+    .item-detail-5-box {
+      margin: 0 5px 8px 5px;
+    }
+
+    .item-detail-5-box:nth-child(5n+1) {
+      margin-left: 0px;
+    }
+
+    .item-detail-5-box:nth-child(5n) {
+      margin-right: 0px;
+    }
+
+    .catalogue-container .item-detail-5-box .box-image {
+      width: 184.5px;
+      height: 150px;
+      text-align: center;
+    }
+
+    .catalogue-container .item-detail-5-box .box-desc-title {
+      font-size: 13px;
+      height: 30px;
+      padding-bottom: 2.5px;
+      line-height: 14px;
+      font-weight: 600;
+    }
+
+    .catalogue-container .item-detail-5-box .box-desc table tbody tr th {
+      font-weight: 500;
+    }
+
+    .catalogue-container .item-detail-5-box .box-desc table tbody tr td {
+      font-weight: 400;
+    }
+
+    .catalogue-container .item-detail-5-box .box-desc {
+      padding: 0 8px 10px 8px;
+    }
+
+    .catalogue-container .item-detail-5-box .box-desc table {
+      padding-top: 1.5px;
+    }
+
+    .pswp .catalogue-container .box-desc table tbody {
+      line-height: 22.8571px;
+    }
+
+    .pswp .catalogue-container .item-detail-5-box table tbody {
+      line-height: 13px !important;
+    }
+
+    .catalogue-container .item-detail-5-box .box-desc table tbody {
+      line-height: 9px;
+    }
+
+    .catalogue-container .item-detail-5-box .box-desc table tbody tr {
+      font-size: 12px;
+    }
+
+    .catalogue-container .item-detail-5-box .box-desc table tbody tr td {
+      padding-left: 5px;
+    }
+
+    .catalogue-container .item-main-wrapper .brand-main-image,
+    .catalogue-container .item-main-wrapper .brand-main-description {
+      width: 50%;
+    }
+
+    .catalogue-container .brand-main-description .item-main-logo {
+      width: 17.5%;
+    }
+
+    .catalogue-container .brand-main-description .brand-main-logo {
+      float: left;
+      margin: 20px 40px;
+      width: 20%;
+    }
+
+    .catalogue-container .item-main-text .brand-title {
+      display: block;
+      font-size: 64px;
+      margin: 0 0 -10px -5px;
+    }
+
+    .catalogue-container .item-main-text .brand-name {
+      display: inline-block;
+    }
+
+    .catalogue-container .brand-main-description .item-main-text {
+      width: 78.5%;
+    }
+
+    .catalogue-container .brand-main-description .item-main-text-list {
+      border-top: 1px solid #dddddd;
+      border-bottom: 1px solid #dddddd;
+      padding: 10px 0;
+      font-family: "Noto Sans KR", Serif;
+      font-size: 15px;
+    }
+
+    .catalogue-container .brand-main-description .item-main-text-list table tbody tr th:before {
+      content: '\2022';
+      margin-right: 10px;
+      font-size: 18px;
+      line-height: 10px;
+    }
+
+    .catalogue-container .brand-main-description .item-main-text-list table tbody tr th {
+      padding: 0 10px 0 5px;
+      text-align: justify;
+      text-align-last: justify;
+    }
+
+    .catalogue-container .brand-main-description .item-main-text-list table tbody tr td {
+      font-weight: 400;
+    }
+
+    .brand-information {
+      margin-top: 20px;
+      max-height: 285px;
+      display: block;
+      overflow: hidden;
+    }
+
+    .brand-information p {
+      margin: 0;
+      font-family: "Noto Sans KR", Serif;
+      font-size: 14px;
+      font-weight: 400;
+    }
+  </style>
+</head>
+<body>
+<div class="book">
+  <div class="page catalogue-container" id="catalogue-static-1">
+    <div class="subpage">
+      <div class="intro-main-wrapper">
+        <div class="intro-main-image">
+          <div class="intro-main-img">
+            <img src="/static/1_bg.jpg"/>
+          </div>
+        </div>
+        <div class="intro-main-date">
+          <h1 id="introDate">2017년</h1>
+        </div>
+        <div class="intro-main-description">
+          <img src="/public/images/web/catalogue/1_logo.png"/>
+          <p id="descTitle">PDF 출력샘플</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+<script src="/static/bower_components/jquery/dist/jquery.js"></script>
+<!-- HTML2CANVAS 와 jsPdf 한 세트이다. -->
+<script src="/static/bower_components/html2canvas/build/html2canvas.min.js"></script>
+<script src="/static/bower_components/jspdf/dist/jspdf.min.js"></script>
+<!-- bluebird는 ie에서 안되는 문제를 해결하기 위해서 사용하는 라이브러리.-->
+<script src="/static/bower_components/bluebird/js/browser/bluebird.min.js"></script>
+
+<script th:inline="javascript">
+  /*<![CDATA[*/
+
+  var length, images, width, height;
+  $(document).ready(function () {
+    images = [];
+    length = $(".catalogue-container").length;
+    $(window).load(function () {
+      width = ($(".catalogue-container").width());
+      height = ($(".catalogue-container").height());
+      getCanvas()
+    });
+  });
+
+  function getCanvas() {
+    var dom = $(".catalogue-container")[0];
+    var scaleBy = 3;
+    var canvas = document.createElement('canvas');
+    canvas.width = width * scaleBy;
+    canvas.height = height * scaleBy;
+    canvas.style.width = width + 'px';
+    canvas.style.height = height + 'px';
+    var context = canvas.getContext('2d');
+    context.scale(scaleBy, scaleBy);
+
+    html2canvas(dom, {
+      canvas: canvas,
+      useCORS: true,
+      allowTaint: true,
+      onrendered: function (canvas) {
+        // IE remove 대체 조건문
+        if (!('remove' in Element.prototype)) {
+          Element.prototype.remove = function () {
+            if (this.parentNode) {
+              this.parentNode.removeChild(this);
+            }
+          };
+        }
+        dom.remove();
+        if (typeof FlashCanvas != "undefined") {
+          FlashCanvas.initElement(canvas);
+        }
+        var image = canvas.toDataURL('image/jpeg', 1.0);
+        images.push({image: image, orderby: images.length - 1});
+
+        if (images.length == length) postImage();
+        else getCanvas();
+      }
+    })
+  }
+
+  function postImage() {
+    var doc = new jsPDF('landscape');
+    images.sort(function (i1, i2) {
+      if (i1.orderby < i2.orderby) return -1;
+      if (i1.orderby > i2.orderby) return 1;
+      return 0;
+    });
+    images.forEach(function (v, i) {
+      if (i != 0) doc.addPage();
+      doc.addImage(v.image, 'PNG', 0, 0, 297, 210);
+      if (i == images.length - 1) {
+        doc.save('samplePdf.pdf');
+      }
+    })
+  }
+  /*]]>*/
+</script>
+</html>

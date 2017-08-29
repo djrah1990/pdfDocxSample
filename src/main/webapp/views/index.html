@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Title</title>
+</head>
+<body>
+<button onclick="window.open('/savePdf')">pdf 다운</button>
+<button id="wordBtn">워드출력</button>
+</body>
+<script src="/static/bower_components/jquery/dist/jquery.min.js" type="text/javascript"></script>
+<script>
+  $("#wordBtn").click(function () {
+    $.get("/api/word/sample", {}, function (data) {
+      alert("워드 문서 출력 완료!")
+    })
+  })
+</script>
+</html>

@@ -1,0 +1,41 @@
+{
+  "name": "SmartCQIWebIntegrated",
+  "version": "1.0.0",
+  "authors": "SmartCQI",
+  "description": "SmartCQIWebIntegrated",
+  "keywords": [],
+  "homepage": "http://www.SmartCQI.kr",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "demo",
+    "demos",
+    "benchmark",
+    "bin",
+    "build",
+    "gradle",
+    "lib",
+    "*.md",
+    "LICENSE",
+    "Gruntfile.js",
+    "*.json",
+    "*.yml",
+    "build.gradle",
+    "gradlew",
+    "gradlew.bat",
+    ".gitattributes",
+    ".jshintrc",
+    ".npmignore"
+  ],
+  "dependencies": {
+    "jquery": "1.12.4",
+    "bootstrap": "3.3.6",
+    "html2canvas": "0.4.1",
+    "jspdf": "1.3.2",
+    "bluebird": "3.4.7"
+  }
+}
